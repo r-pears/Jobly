@@ -1,6 +1,8 @@
 const { BadRequestError } = require("../expressError");
 
-// THIS NEEDS SOME GREAT DOCUMENTATION.
+// This is a helper function for making selective update queries.
+// The function calling it can use it to make the SET clause of
+// an SQL UPDATE statement.
 
 function sqlForPartialUpdate(dataToUpdate, jsToSql) {
   const keys = Object.keys(dataToUpdate);

@@ -12,6 +12,7 @@ const {
   commonBeforeEach,
   commonAfterEach,
   commonAfterAll,
+  testJobsIds,
 } = require("./_testCommon");
 
 beforeAll(commonBeforeAll);
@@ -225,6 +226,44 @@ describe("remove", function () {
       fail();
     } catch (err) {
       expect(err instanceof NotFoundError).toBeTruthy();
+    }
+  });
+});
+
+/** applyToJob */
+
+describe("applyToJob", function () { 
+  test("works", async function () {
+    await User.applyToJob("u1", testJobsIds[1]);
+    
+    const res = await db.query(
+      `SELECT *
+        FROM applications
+        WHERE job_id = $1`,
+      [testJobsIds[1]]
+    );
+
+    expect(res.rows).toEqual([{
+      job_id: testJobsIds[1],
+      username: "u1",
+    }]);
+  });
+
+  test("not found if no job with that id", async function () {
+    try {
+      await User.applyToJob("u1", 0, "applied");
+      fail();
+    } catch (error) {
+      expect(error instanceof NotFoundError).toBeTruthy();
+    }
+  });
+
+  test("not found if no user with that name", async function () {
+    try {
+      await User.applyToJob("no_person", testJobsIds[0], "applied");
+      fail();
+    } catch (error) {
+      expect(error instanceof NotFoundError).toBeTruthy();
     }
   });
 });
